@@ -1,0 +1,15 @@
+{
+  "name": "mtk-claude-plugins",
+  "owner": {
+    "name": "MTK One"
+  },
+  "description": "Marketplace de plugins Claude Code da MTK One",
+  "plugins": [
+    {
+      "name": "publicar-app-play-store",
+      "source": "./publicar-app-play-store",
+      "description": "Automatiza e orienta o processo de publicação de apps na Google Play Store",
+      "version": "0.1.0"
+    }
+  ]
+}
