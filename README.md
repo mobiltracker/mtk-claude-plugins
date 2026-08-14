@@ -102,6 +102,29 @@ O Claude Code **não** detecta automaticamente novos commits. Quem já tem o mar
 
 > Dica: com _auto-update_ habilitado (aba **Marketplaces** em `/plugin`), o catálogo se atualiza sozinho em segundo plano.
 
+## Usando no Claude Desktop
+
+O marketplace e o `/plugin install` são exclusivos do Claude Code — não funcionam no Claude Desktop, claude.ai (web) ou mobile. Para usar a skill `publicar-app-play-store` no Desktop, replique manualmente:
+
+1. **Copiar a skill**: abra `publicar-app-play-store/skills/publicar-app-play-store/SKILL.md` e cole o conteúdo como uma Skill customizada nas configurações do Claude Desktop.
+2. **Configurar o MCP**: edite o config do Desktop e adicione o mesmo servidor registrado em `publicar-app-play-store/.mcp.json`:
+   - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+   - Linux: `~/.config/Claude/claude_desktop_config.json`
+   ```json
+   {
+     "mcpServers": {
+       "playwright": {
+         "command": "npx",
+         "args": ["@playwright/mcp@latest"]
+       }
+     }
+   }
+   ```
+3. Reiniciar o Claude Desktop.
+
+> Não sincroniza automaticamente: qualquer atualização feita aqui no repositório precisa ser copiada manualmente de novo para o Desktop.
+
 ## Comandos úteis
 
 | Comando                                             | O que faz                                                                         |
