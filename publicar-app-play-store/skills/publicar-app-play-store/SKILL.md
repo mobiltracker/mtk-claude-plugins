@@ -7,9 +7,7 @@ description: Use when publicando um novo app parceiro white-label (Monitor/Track
 
 ## Overview
 
-Substitui `partner/publicar_app/publish_play_store.py` (que usava `browser-use` + uma `ANTHROPIC_API_KEY` própria, cobrada por token). Aqui, o próprio agente da sessão atual do Claude Code navega a Play Console usando as tools do MCP `playwright` (registrado em `.mcp.json`) — sem instanciar nenhum LLM externo, sem custo de API separado.
-
-Também existe uma automação sem IA em `node/partner/app-creation/` (Puppeteer com seletores fixos `debug-id`) — está **deprecada**, quebra a cada mudança de layout da Play Console. Não usar.
+Guia a criação e configuração completa de um app parceiro white-label (Monitor/Tracker/Visits) na Google Play Console, navegando a interface via MCP `playwright` (registrado em `.mcp.json`) — sem instanciar nenhum LLM externo, sem custo de API separado.
 
 Cada clique/preenchimento passa pelo sistema de permissão normal do Claude Code — isso já funciona como "modo híbrido" (o colaborador vê e aprova cada ação). Não é necessário simular pausas extras.
 
