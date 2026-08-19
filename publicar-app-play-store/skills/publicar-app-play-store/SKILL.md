@@ -25,12 +25,12 @@ Perguntar ao colaborador, antes de começar:
 - Caminho local do `.aab` gerado
 - Caminho local do ícone (512x512) e do recurso gráfico (1024x500)
 - Caminhos das 4 screenshots (Login, Mapa last location, Mapa histórico, Comandos)
-- Qual variante do app é (Monitor / Tracker / Visits) — define qual `data_safety_export.csv` usar:
-  - `partner/manual_scripts/app_android_monitor_privacy/data_safety_export.csv`
-  - `partner/manual_scripts/app_android_tracker_privacy/data_safety_export_app_tracker.csv`
-  - `partner/manual_scripts/app_android_visits_privacy/data_safety_export_app_visits.csv`
+- Qual variante do app é (Monitor / Tracker / Visits)
+- Caminho local do CSV de segurança dos dados já gerado para esse app — o colaborador roda o script da variante correta, no repo `mobiltracker/mobiltracker-scripts`, em `partner/manual_scripts/app_android_monitor_privacy` / `app_android_tracker_privacy` / `app_android_visits_privacy`, com os dados dessa empresa (businessname, cnpj, email, ramo, appname, domain)
 
 Não avançar sem todos esses dados.
+
+**Pré-requisito**: confirmar que o JSON de service account do cliente já está salvo no bucket S3 `google-play-service-accounts` (renomeado como `<BRAND_NAME>-api-...`) — feito manualmente pelo colaborador, fora do escopo desta skill, mas não precisa esperar a publicação pra fazer isso.
 
 ## REGRA ABSOLUTA
 
@@ -54,11 +54,11 @@ A tarefa termina aí — o colaborador faz o clique final manualmente.
 Painel > Configurar o app > Ver etapas. Preencher cada subseção e salvar antes de ir para a próxima:
 
 - **Política de privacidade**: inserir a URL da política, salvar
-- **Acesso de apps**: "Recursos são restritos", credencial de teste `android@teste.com` / `123456`, salvar
+- **Acesso de apps**: "Recursos são restritos", credencial de teste `android@teste.com` / `123456` — confirmar que a conta "TK VALIDADOR INFRA" está compartilhada e online nessa credencial antes de salvar
 - **Anúncios**: "O app não tem anúncios", salvar
 - **Classificação de conteúdo**: email `mobiltrackerbrazil@gmail.com`, categoria "Todos os Outros Tipos de Aplicações", questionário: "Conteúdo Online" = Sim, todas as demais perguntas = Não (ler cada uma antes de confirmar que faz sentido), enviar
 - **Público-alvo e conteúdo**: faixa etária "Maiores de 18 anos", salvar
-- **Segurança dos dados**: importar o CSV correto da variante do app (Passo 0), avançar para "Coleta de dados e segurança":
+- **Segurança dos dados**: importar o CSV informado no Passo 0, avançar para "Coleta de dados e segurança":
   - Coleta dados obrigatórios: Sim
   - Dados criptografados em trânsito: Sim
   - Métodos de criação de contas: selecionar as opções relevantes mostradas
@@ -93,7 +93,7 @@ Painel > Configurar o app > Ver etapas. Preencher cada subseção e salvar antes
 - **Países e regiões**: Testar e lançar > Produção > Países/regiões, adicionar todos, salvar
 - **Teste fechado** (obrigatório antes de produção): Testes > Teste fechado, adicionar todos os países, criar nova versão:
   - Upload do `.aab`
-  - Assinatura de apps: "Gerenciar Preferências" > baixar chave de assinatura > copiar valor hex > rodar a workflow `export_signing_key_output_zip.yml` em `github.com/mobiltracker/mobiltracker-app-monitor/actions` com esse hex > baixar o `.zip` gerado > fazer upload do `.zip` no campo de assinatura > aceitar os termos
+  - Assinatura de apps: "Gerenciar Preferências" > baixar chave de assinatura > copiar valor hex > rodar a workflow `_export_signing_key_output_zip.yml` em `github.com/mobiltracker/mobiltracker-app-monitor/actions` com esse hex > baixar o `.zip` gerado > fazer upload do `.zip` no campo de assinatura > aceitar os termos
   - Verificar fingerprints em Configuração > Assinatura de apps:
     - MD5: `FA:59:F1:46:48:6A:22:4B:7E:CD:B6:FF:6F:63:14:8A`
     - SHA1: `E7:4E:D4:69:CA:63:13:A5:5E:AD:02:DA:B8:ED:75:C8:6E:36:35:15`
