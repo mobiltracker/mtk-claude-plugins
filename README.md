@@ -88,7 +88,8 @@ O Claude Code **não** detecta automaticamente novos commits. Quem já tem o mar
 
 - Atualizar o catálogo: `/plugin marketplace update mtk-claude-plugins` (só atualiza a lista disponível — não reinstala o que já está instalado)
 - Instalar o que for novo: `/plugin install <novo-plugin>@mtk-claude-plugins`
-- Se só mudou uma skill de um plugin já instalado (sem bump de `version`): `/reload-plugins`
+- Se mudou o conteúdo de uma skill de um plugin já instalado via marketplace: **precisa dar bump no campo `version`** (no `plugin.json` do plugin E no `marketplace.json`) antes de commitar/push — o Claude Code decide se há atualização comparando esse número, não o conteúdo dos arquivos. Sem isso, nem `/plugin marketplace update` nem `/reload-plugins` puxam o conteúdo novo (confirmado na prática: o cache em `~/.claude/plugins/cache/.../<version>/` só é regravado quando a versão muda)
+- `/reload-plugins` sozinho só resolve para plugins instalados em modo local/dev (linkados direto da pasta do repo)
 
 > Dica: com _auto-update_ habilitado (aba **Marketplaces** em `/plugin`), o catálogo se atualiza sozinho em segundo plano.
 
