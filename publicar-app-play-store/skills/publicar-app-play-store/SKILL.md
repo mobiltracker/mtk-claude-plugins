@@ -23,6 +23,7 @@ Perguntar ao colaborador, antes de começar:
 - Site do cliente (`CLIENT_WEBSITE`)
 - URL da política de privacidade (S3, `mobiltracker-partner-prefs`)
 - Caminho local do `.aab` gerado
+- Nome do pacote (`PACKAGE_NAME`) — precisa ser exatamente o mesmo pacote do `.aab` informado acima
 - Caminho local do ícone (512x512) e do recurso gráfico (1024x500)
 - Caminhos das 4 screenshots (Login, Mapa last location, Mapa histórico, Comandos)
 - Qual variante do app é (Monitor / Tracker / Visits)
@@ -46,7 +47,7 @@ A tarefa termina aí — o colaborador faz o clique final manualmente.
 2. Login com `mobiltracker.brazil@gmail.com` (se pedir verificação extra do Google por detectar navegação automatizada, avisar o colaborador e deixar ele resolver na janela aberta)
 3. Selecionar a conta de desenvolvedor
 4. Clicar em "Criar app"
-5. Preencher: nome = `APP_NAME`, idioma padrão = Português (Brasil), tipo = App (não Jogo), preço = Gratuito, aceitar declarações de Políticas do programa e Leis de exportação dos EUA
+5. Preencher: nome = `APP_NAME`, nome do pacote = `PACKAGE_NAME`, idioma padrão = Português (Brasil), tipo = App (não Jogo), preço = Gratuito, aceitar declarações de Políticas do programa e Leis de exportação dos EUA
 6. Clicar em "Criar app"
 
 ## Passo 2 — Configuração inicial
@@ -63,12 +64,14 @@ Painel > Configurar o app > Ver etapas. Preencher cada subseção e salvar antes
   - Dados criptografados em trânsito: Sim
   - Métodos de criação de contas: selecionar as opções relevantes mostradas
   - Oferece exclusão de dados: Não
-  - Confirmar que os tipos de dados foram marcados pelo CSV (IDs de usuário, interações no app, registros de falhas/diagnóstico/desempenho, identificadores de dispositivo); se algum não vier marcado, marcar manualmente e preencher o questionário de cada tipo:
+  - Confirmar que os tipos de dados foram marcados pelo CSV (IDs de usuário, interações no app, registros de falhas/diagnóstico/desempenho, identificadores de dispositivo); se algum não vier marcado, marcar manualmente
+  - Avançar
+  - Apps governamentais: Não · Recursos financeiros: "Meu app não oferece recursos financeiros" · Apps de saúde: "Meu app não tem recursos de saúde"
+  - Preencher o questionário de cada tipo de dado marcado:
     - Interações no app: Coletado, não efêmero, coleta obrigatória, motivo = Funcionalidade do app / Análise / Segurança-conformidade-prevenção de fraudes
     - Registros de falhas/diagnóstico/desempenho: Coletado, não efêmero, coleta obrigatória, motivo = Análise / Segurança-conformidade-prevenção de fraudes
     - Identificadores de dispositivo: Coletado E Compartilhado, não efêmero, coleta obrigatória, motivo coleta = Funcionalidade do app / Análise / Mensagens do desenvolvedor / Segurança-conformidade, motivo compartilhado = Análise / Mensagens do desenvolvedor
   - Salvar e avançar
-  - Apps governamentais: Não · Recursos financeiros: "Meu app não oferece recursos financeiros" · Apps de saúde: "Meu app não tem recursos de saúde"
 - **ID de publicidade**: (em "Monitorar e aprimorar") "O app usa ID de publicidade?" = Não, salvar
 - **Categoria e contato**: App, categoria "Empresa", email = `CLIENT_EMAIL`, site = `CLIENT_WEBSITE`, marcar "Marketing externo", salvar
 - **Detalhes do app**:
