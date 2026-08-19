@@ -72,17 +72,7 @@ claude plugin install publicar-app-play-store@mtk-claude-plugins --scope user
 
 O comando de instalação abre um menu para escolher o escopo (`user`, `project` ou `local`).
 
-## Publicando este repositório (deploy)
-
-### Configuração inicial (uma vez só)
-
-1. Criar o repositório no GitHub (ex: `Mobiltracker/mtk-claude-plugins`), caso ainda não exista.
-2. Conectar o remoto local:
-   ```bash
-   git remote add origin git@github.com:Mobiltracker/mtk-claude-plugins.git
-   ```
-
-### Publicando alterações (a cada push)
+### Publicando alterações
 
 1. Commitar as mudanças:
    ```bash
