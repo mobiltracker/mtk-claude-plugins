@@ -1,6 +1,6 @@
 ---
 name: publicar-app-play-store
-description: Use when publicando um novo app parceiro white-label (Monitor/Tracker/Visits) na Google Play Console, guiando o fluxo completo de criação e configuração via MCP de browser, sem clicar no botão final de publicação
+description: Usar para publicar um novo app parceiro white-label (Monitor/Tracker/Visits) na Google Play Console, guiando o fluxo completo de criação e configuração via MCP de browser, sem clicar no botão final de publicação.
 ---
 
 # Publicar App na Play Store
@@ -110,6 +110,7 @@ Painel > Configurar o app > Ver etapas. Preencher cada subseção e salvar antes
 - Nunca inventar resposta para uma pergunta do questionário que não esteja listada aqui — se a Play Console mostrar uma pergunta nova/diferente, parar e perguntar ao colaborador
 - Se uma tool do MCP falhar em encontrar/interpretar um elemento da tela, parar e mostrar o que está vendo — não adivinhar clique
 - Nunca commitar nada relacionado a esse fluxo sem aprovação explícita (regra do projeto)
+- Ao concluir cada subseção (ex.: Política de privacidade, Acesso de apps, Segurança dos dados), reportar uma linha de status ao colaborador (ex.: `[Política de privacidade] preenchida`) antes de seguir para a próxima
 
 ## Erros comuns
 
