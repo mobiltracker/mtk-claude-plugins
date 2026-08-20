@@ -2,7 +2,7 @@
   "name": "publicar-app-play-store",
   "displayName": "Publicar App na Play Store",
   "description": "Automatiza e orienta o processo de publicação de apps na Google Play Store",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": {
     "name": "MTK One"
   }

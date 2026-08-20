@@ -11,6 +11,8 @@ Guia a criação e configuração completa de um app parceiro white-label (Monit
 
 Cada clique/preenchimento passa pelo sistema de permissão normal do Claude Code — isso já funciona como "modo híbrido" (o colaborador vê e aprova cada ação). Não é necessário simular pausas extras.
 
+**Execução em blocos**: preencher cada subseção usando `browser_fill_form` para múltiplos campos de uma vez, em vez de um `browser_click`/`browser_type` por campo. Tirar `browser_snapshot` apenas ao final do bloco para confirmar o estado — não após cada ação isolada — exceto nos pontos que já exigem checagem campo a campo (ex.: Segurança dos dados).
+
 ## Passo 0 — Coletar dados
 
 Perguntar ao colaborador, antes de começar:
@@ -19,17 +21,19 @@ Perguntar ao colaborador, antes de começar:
 - Nome da marca/cliente (`BRAND_NAME`)
 - Email de contato do cliente (`CLIENT_EMAIL`)
 - Site do cliente (`CLIENT_WEBSITE`)
-- URL da política de privacidade (S3, `mobiltracker-partner-prefs`)
+- URL da política de privacidade (S3, `mobiltracker-partner-prefs`) — gerada rodando o script da variante correta, no repo `mobiltracker/mobiltracker-scripts`, em `partner/manual_scripts/app_android_monitor_privacy` / `app_android_tracker_privacy` / `app_android_visits_privacy`, com os dados dessa empresa (businessname, cnpj, email, ramo, appname, domain)
 - Caminho local do `.aab` gerado
 - Nome do pacote (`PACKAGE_NAME`) — precisa ser exatamente o mesmo pacote do `.aab` informado acima
 - Caminho local do ícone (512x512) e do recurso gráfico (1024x500)
 - Caminhos das 4 screenshots (Login, Mapa last location, Mapa histórico, Comandos)
 - Qual variante do app é (Monitor / Tracker / Visits)
-- Caminho local do CSV de segurança dos dados já gerado para esse app — o colaborador roda o script da variante correta, no repo `mobiltracker/mobiltracker-scripts`, em `partner/manual_scripts/app_android_monitor_privacy` / `app_android_tracker_privacy` / `app_android_visits_privacy`, com os dados dessa empresa (businessname, cnpj, email, ramo, appname, domain)
+- Caminho local do CSV de segurança dos dados da variante correta — está junto com os scripts de política de privacidade, no mesmo repo `mobiltracker/mobiltracker-scripts`, em `partner/manual_scripts/app_android_monitor_privacy/data_safety_export.csv` / `app_android_tracker_privacy/data_safety_export_app_tracker.csv` / `app_android_visits_privacy/data_safety_export_app_visits.csv`
 
 Não avançar sem todos esses dados.
 
 **Pré-requisito**: confirmar que o JSON de service account do cliente já está salvo no bucket S3 `google-play-service-accounts` (renomeado como `<BRAND_NAME>-api-...`) — feito manualmente pelo colaborador, fora do escopo desta skill, mas não precisa esperar a publicação pra fazer isso.
+
+**Aviso**: mais adiante, na hora de enviar o ícone, o recurso gráfico, os screenshots e o `.aab`, a ferramenta de automação pode não conseguir fazer o upload (arquivos grandes, ex. `.aab` acima de ~10MB, ou seletor de arquivo inacessível) — nesse caso, precisa ser feito manualmente pelo colaborador. Avisar isso logo no início, sem esperar chegar nesse ponto.
 
 ## REGRA ABSOLUTA
 
@@ -50,25 +54,16 @@ A tarefa termina aí — o colaborador faz o clique final manualmente.
 
 ## Passo 2 — Configuração inicial
 
-Painel > Configurar o app > Ver etapas. Preencher cada subseção e salvar antes de ir para a próxima:
+Painel > Configurar o app > Ver etapas. Preencher cada subseção em bloco (todos os campos dela em uma única chamada de `browser_fill_form` quando a tela permitir) e salvar antes de ir para a próxima:
 
 - **Política de privacidade**: inserir a URL da política, salvar
 - **Acesso de apps**: "Recursos são restritos", credencial de teste `android@teste.com` / `123456` — confirmar que a conta "TK VALIDADOR INFRA" está compartilhada e online nessa credencial antes de salvar
 - **Anúncios**: "O app não tem anúncios", salvar
 - **Classificação de conteúdo**: email `mobiltrackerbrazil@gmail.com`, categoria "Todos os Outros Tipos de Aplicações", questionário: "Conteúdo Online" = Sim, todas as demais perguntas = Não (ler cada uma antes de confirmar que faz sentido), enviar
 - **Público-alvo e conteúdo**: faixa etária "Maiores de 18 anos", salvar
-- **Segurança dos dados**: importar o CSV informado no Passo 0, avançar para "Coleta de dados e segurança":
-  - Coleta dados obrigatórios: Sim
-  - Dados criptografados em trânsito: Sim
-  - Métodos de criação de contas: selecionar as opções relevantes mostradas
-  - Oferece exclusão de dados: Não
-  - Confirmar que os tipos de dados foram marcados pelo CSV (IDs de usuário, interações no app, registros de falhas/diagnóstico/desempenho, identificadores de dispositivo); se algum não vier marcado, marcar manualmente
+- **Segurança dos dados**: importar o CSV informado no Passo 0 (todas as respostas do questionário vêm do CSV e variam por variante — Monitor/Tracker/Visits têm respostas diferentes, inclusive em localização, exclusão de dados e compartilhamento de identificadores; nunca preencher esses campos de memória). Avançar para "Coleta de dados e segurança" e conferir que veio tudo preenchido pelo CSV (coleta de dados obrigatórios, criptografia em trânsito, métodos de criação de contas, exclusão de dados, tipos de dados e o questionário de cada tipo). Se algum campo não vier marcado pelo CSV, PARAR e perguntar ao colaborador a resposta correta — não inventar
   - Avançar
   - Apps governamentais: Não · Recursos financeiros: "Meu app não oferece recursos financeiros" · Apps de saúde: "Meu app não tem recursos de saúde"
-  - Preencher o questionário de cada tipo de dado marcado:
-    - Interações no app: Coletado, não efêmero, coleta obrigatória, motivo = Funcionalidade do app / Análise / Segurança-conformidade-prevenção de fraudes
-    - Registros de falhas/diagnóstico/desempenho: Coletado, não efêmero, coleta obrigatória, motivo = Análise / Segurança-conformidade-prevenção de fraudes
-    - Identificadores de dispositivo: Coletado E Compartilhado, não efêmero, coleta obrigatória, motivo coleta = Funcionalidade do app / Análise / Mensagens do desenvolvedor / Segurança-conformidade, motivo compartilhado = Análise / Mensagens do desenvolvedor
   - Salvar e avançar
 - **ID de publicidade**: (em "Monitorar e aprimorar") "O app usa ID de publicidade?" = Não, salvar
 - **Categoria e contato**: App, categoria "Empresa", email = `CLIENT_EMAIL`, site = `CLIENT_WEBSITE`, marcar "Marketing externo", salvar
@@ -86,14 +81,15 @@ Painel > Configurar o app > Ver etapas. Preencher cada subseção e salvar antes
     Obs.: se você não é um usuário registrado desse serviço, não instale esse aplicativo.
     ```
 
-  - Upload do ícone 512x512, gráfico 1024x500 e das 4 screenshots
+  - Upload do ícone 512x512, gráfico 1024x500 e das 4 screenshots — se a tool de upload falhar em interagir com o campo, é uma limitação conhecida (o input de arquivo pode não ser acessível pra automação nessa tela); parar e avisar o colaborador que precisa fazer esse upload manualmente e também clicar em Salvar
+  - Declaração de recursos de IA: "Não rotular recursos"
   - Salvar
 
 ## Passo 3 — Publicar
 
 - **Países e regiões**: Testar e lançar > Produção > Países/regiões, adicionar todos, salvar
-- **Teste fechado** (obrigatório antes de produção): Testes > Teste fechado, adicionar todos os países, criar nova versão:
-  - Upload do `.aab`
+- **Teste fechado** (obrigatório antes de produção): Testes > Teste fechado, adicionar todos os países, selecionar a lista de testadores já existente ("Testadores") — não criar uma lista nova com e-mails arbitrários, pois a Play Console exige que sejam contas Google reais e válidas; criar nova versão:
+  - Upload do `.aab` — se o arquivo for maior que o limite suportado pela ferramenta de automação (~10MB) ou o upload falhar, parar e avisar o colaborador que precisa fazer esse upload manualmente e também clicar em Salvar
   - Assinatura de apps: "Gerenciar Preferências" > baixar chave de assinatura > copiar valor hex > rodar a workflow `_export_signing_key_output_zip.yml` em `github.com/mobiltracker/mobiltracker-app-monitor/actions` com esse hex > baixar o `.zip` gerado > fazer upload do `.zip` no campo de assinatura > aceitar os termos
   - Verificar fingerprints em Configuração > Assinatura de apps:
     - MD5: `FA:59:F1:46:48:6A:22:4B:7E:CD:B6:FF:6F:63:14:8A`
@@ -101,11 +97,12 @@ Painel > Configurar o app > Ver etapas. Preencher cada subseção e salvar antes
     - SHA256: `6B:82:48:C8:1C:EA:AB:CF:D5:54:F1:70:56:A9:D8:5F:2A:3E:99:04:64:9C:8E:2F:C2:3B:B1:DC:3A:D4:A3:FA`
   - Notas da versão: "Lançamento."
   - Salvar e enviar para revisão
-- **Versão de produção**: Painel > Testar e lançar > Produção > Versões > Editar versão, upload do mesmo `.aab`, notas "Lançamento.", salvar
+- **Versão de produção**: Painel > Testar e lançar > Produção > Versões > Editar versão, upload do mesmo `.aab` (mesma ressalva de tamanho/limite acima — se precisar ser manual, avisar o colaborador pra também clicar em Salvar), notas "Lançamento.", salvar
 - **Publicar**: Versões > Produção > Avaliar Versão, navegar até "Iniciar lançamento para produção" — aplicar a REGRA ABSOLUTA e parar aqui
 
 ## Regras
 
+- Agrupar preenchimentos relacionados em uma única chamada de ferramenta (`browser_fill_form`) sempre que a tela permitir; evitar snapshot após cada campo individual
 - Nunca pular a REGRA ABSOLUTA, em nenhum modo de execução
 - Nunca inventar resposta para uma pergunta do questionário que não esteja listada aqui — se a Play Console mostrar uma pergunta nova/diferente, parar e perguntar ao colaborador
 - Se uma tool do MCP falhar em encontrar/interpretar um elemento da tela, parar e mostrar o que está vendo — não adivinhar clique
