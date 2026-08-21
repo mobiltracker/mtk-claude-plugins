@@ -11,7 +11,7 @@ Guia a criação e configuração completa de um app parceiro white-label (Monit
 
 Cada clique/preenchimento passa pelo sistema de permissão normal do Claude Code — isso já funciona como "modo híbrido" (o colaborador vê e aprova cada ação). Não é necessário simular pausas extras.
 
-**Execução em blocos**: preencher cada subseção usando `browser_fill_form` para múltiplos campos de uma vez, em vez de um `browser_click`/`browser_type` por campo. Tirar `browser_snapshot` apenas ao final do bloco para confirmar o estado — não após cada ação isolada — exceto nos pontos que já exigem checagem campo a campo (ex.: Segurança dos dados).
+**Execução em blocos**: preencher cada subseção usando `browser_fill_form` para múltiplos campos de uma vez, em vez de um `browser_click`/`browser_type` por campo. O operador acompanha a tela ao vivo, então não é preciso tirar `browser_snapshot` pra confirmar estado.
 
 ## Passo 0 — Coletar dados
 
@@ -61,12 +61,12 @@ Painel > Configurar o app > Ver etapas. Preencher cada subseção em bloco (todo
 - **Anúncios**: "O app não tem anúncios", salvar
 - **Classificação de conteúdo**: email `mobiltrackerbrazil@gmail.com`, categoria "Todos os Outros Tipos de Aplicações", questionário: "Conteúdo Online" = Sim, todas as demais perguntas = Não (ler cada uma antes de confirmar que faz sentido), enviar
 - **Público-alvo e conteúdo**: faixa etária "Maiores de 18 anos", salvar
-- **Segurança dos dados**: importar o CSV informado no Passo 0 (todas as respostas do questionário vêm do CSV e variam por variante — Monitor/Tracker/Visits têm respostas diferentes, inclusive em localização, exclusão de dados e compartilhamento de identificadores; nunca preencher esses campos de memória). Avançar para "Coleta de dados e segurança" e conferir que veio tudo preenchido pelo CSV (coleta de dados obrigatórios, criptografia em trânsito, métodos de criação de contas, exclusão de dados, tipos de dados e o questionário de cada tipo). Se algum campo não vier marcado pelo CSV, PARAR e perguntar ao colaborador a resposta correta — não inventar
-  - Avançar
-  - Apps governamentais: Não · Recursos financeiros: "Meu app não oferece recursos financeiros" · Apps de saúde: "Meu app não tem recursos de saúde"
-  - Salvar e avançar
-- **ID de publicidade**: (em "Monitorar e aprimorar") "O app usa ID de publicidade?" = Não, salvar
-- **Categoria e contato**: App, categoria "Empresa", email = `CLIENT_EMAIL`, site = `CLIENT_WEBSITE`, marcar "Marketing externo", salvar
+- **Segurança dos dados**: importar o CSV informado no Passo 0 (todas as respostas do questionário vêm do CSV e variam por variante — Monitor/Tracker/Visits têm respostas diferentes, inclusive em localização, exclusão de dados e compartilhamento de identificadores; nunca preencher esses campos de memória). Avançar para "Coleta de dados e segurança" e conferir que veio tudo preenchido pelo CSV (coleta de dados obrigatórios, criptografia em trânsito, métodos de criação de contas, exclusão de dados, tipos de dados e o questionário de cada tipo). Se algum campo não vier marcado pelo CSV, PARAR e perguntar ao colaborador a resposta correta — não inventar. Salvar
+- **Apps governamentais**: seção própria — "Não", salvar
+- **Recursos financeiros**: seção própria — "Meu app não oferece recursos financeiros", salvar
+- **Apps de saúde**: seção própria — "Meu app não tem recursos de saúde", salvar
+- **ID de publicidade**: seção própria dentro de "Monitorar e aprimorar". "O app usa ID de publicidade?" = "Não", salvar
+- **Categoria e contato**: App, categoria "Empresa", marcar "Marketing externo". Email e site costumam falhar com `browser_fill_form` nessa tela — preencher `CLIENT_EMAIL` e `CLIENT_WEBSITE` campo a campo com `browser_click` no campo seguido de `browser_type`. Salvar
 - **Detalhes do app**:
   - Nome = `APP_NAME`
   - Breve descrição: `Exclusivo para usuários registrados {BRAND_NAME}.`
@@ -88,7 +88,7 @@ Painel > Configurar o app > Ver etapas. Preencher cada subseção em bloco (todo
 ## Passo 3 — Publicar
 
 - **Países e regiões**: Testar e lançar > Produção > Países/regiões, adicionar todos, salvar
-- **Teste fechado** (obrigatório antes de produção): Testes > Teste fechado, adicionar todos os países, selecionar a lista de testadores já existente ("Testadores") — não criar uma lista nova com e-mails arbitrários, pois a Play Console exige que sejam contas Google reais e válidas; criar nova versão:
+- **Produção direta**: Testar e lançar > Produção > Versões > "Criar e publicar uma versão" — tentar publicar direto em produção, pulando o Teste fechado quando o Play Console permitir:
   - Upload do `.aab` — se o arquivo for maior que o limite suportado pela ferramenta de automação (~10MB) ou o upload falhar, parar e avisar o colaborador que precisa fazer esse upload manualmente e também clicar em Salvar
   - Assinatura de apps: "Gerenciar Preferências" > baixar chave de assinatura > copiar valor hex > rodar a workflow `_export_signing_key_output_zip.yml` em `github.com/mobiltracker/mobiltracker-app-monitor/actions` com esse hex > baixar o `.zip` gerado > fazer upload do `.zip` no campo de assinatura > aceitar os termos
   - Verificar fingerprints em Configuração > Assinatura de apps:
@@ -96,18 +96,20 @@ Painel > Configurar o app > Ver etapas. Preencher cada subseção em bloco (todo
     - SHA1: `E7:4E:D4:69:CA:63:13:A5:5E:AD:02:DA:B8:ED:75:C8:6E:36:35:15`
     - SHA256: `6B:82:48:C8:1C:EA:AB:CF:D5:54:F1:70:56:A9:D8:5F:2A:3E:99:04:64:9C:8E:2F:C2:3B:B1:DC:3A:D4:A3:FA`
   - Notas da versão: "Lançamento."
-  - Salvar e enviar para revisão
-- **Versão de produção**: Painel > Testar e lançar > Produção > Versões > Editar versão, upload do mesmo `.aab` (mesma ressalva de tamanho/limite acima — se precisar ser manual, avisar o colaborador pra também clicar em Salvar), notas "Lançamento.", salvar
+  - Salvar
+- **Fallback — Teste fechado**: se o Play Console bloquear a produção direta e exigir teste fechado antes (ex.: conta nova, política do Google), seguir por Testes > Teste fechado, adicionar todos os países, selecionar a lista de testadores já existente ("Testadores") — não criar uma lista nova com e-mails arbitrários, pois a Play Console exige que sejam contas Google reais e válidas; criar nova versão com o mesmo `.aab`/assinatura/notas acima, salvar e enviar para revisão. Depois, repetir o upload em Painel > Testar e lançar > Produção > Versões > Editar versão
 - **Publicar**: Versões > Produção > Avaliar Versão, navegar até "Iniciar lançamento para produção" — aplicar a REGRA ABSOLUTA e parar aqui
 
 ## Regras
 
-- Agrupar preenchimentos relacionados em uma única chamada de ferramenta (`browser_fill_form`) sempre que a tela permitir; evitar snapshot após cada campo individual
+- Agrupar preenchimentos relacionados em uma única chamada de ferramenta (`browser_fill_form`) sempre que a tela permitir
 - Nunca pular a REGRA ABSOLUTA, em nenhum modo de execução
+- Apps governamentais, Recursos financeiros e Apps de saúde são telas separadas (não sub-passos de Segurança dos dados) — abrir e salvar cada uma individualmente
 - Nunca inventar resposta para uma pergunta do questionário que não esteja listada aqui — se a Play Console mostrar uma pergunta nova/diferente, parar e perguntar ao colaborador
 - Se uma tool do MCP falhar em encontrar/interpretar um elemento da tela, parar e mostrar o que está vendo — não adivinhar clique
 - Nunca commitar nada relacionado a esse fluxo sem aprovação explícita (regra do projeto)
-- Ao concluir cada subseção (ex.: Política de privacidade, Acesso de apps, Segurança dos dados), reportar uma linha de status ao colaborador (ex.: `[Política de privacidade] preenchida`) antes de seguir para a próxima
+- Upload de arquivo (ícone, gráfico, screenshots, `.aab`, `.zip` de assinatura): tentar uma única vez — se der certo de primeira, seguir; se falhar, não insistir/tentar de novo, avisar direto o colaborador pra fazer manualmente
+- Ao concluir cada subseção (ex.: Política de privacidade, Acesso de apps, Segurança dos dados, ID de publicidade, Categoria e contato), reportar uma linha de status ao colaborador (ex.: `[Política de privacidade] preenchida`) antes de seguir para a próxima
 
 ## Erros comuns
 
