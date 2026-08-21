@@ -16,6 +16,12 @@
       "source": "./review-standards",
       "description": "Revisa código frontend contra os standards do knowledge-base da MTK",
       "version": "0.1.0"
+    },
+    {
+      "name": "update-mtk-plugins",
+      "source": "./update-mtk-plugins",
+      "description": "Atualiza o marketplace e os plugins da MTK e lembra de recarregar a sessão",
+      "version": "0.1.0"
     }
   ]
 }

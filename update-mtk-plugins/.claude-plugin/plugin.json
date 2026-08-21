@@ -1,0 +1,9 @@
+{
+  "name": "update-mtk-plugins",
+  "displayName": "Update MTK Plugins",
+  "description": "Atualiza o marketplace e os plugins da MTK e lembra de recarregar a sessão",
+  "version": "0.1.0",
+  "author": {
+    "name": "MTK One"
+  }
+}
