@@ -29,50 +29,53 @@ Uma **skill** é uma instrução reutilizável que o Claude aprende a executar. 
 ```
 mtk-claude-plugins/
 ├── .claude-plugin/
-│   └── marketplace.json              # catálogo do marketplace
-├── publicar-app-play-store/          # um plugin
+│   └── marketplace.json              # catálogo do marketplace: lista todos os plugins publicados aqui
+├── nome-do-plugin/                   # pasta de um plugin (uma por plugin, na raiz do repo)
 │   ├── .claude-plugin/
-│   │   └── plugin.json               # manifesto do plugin
-│   ├── .mcp.json                     # MCP servers do plugin (se houver)
+│   │   └── plugin.json               # obrigatório: manifesto do plugin (nome, versão, descrição, autor)
+│   ├── .mcp.json                     # opcional: MCP servers que o plugin registra (chave "mcpServers")
 │   └── skills/
-│       └── publicar-app-play-store/
-│           └── SKILL.md              # skill do plugin
+│       └── nome-da-skill/
+│           └── SKILL.md              # uma pasta por skill; pode haver várias skills num mesmo plugin
 └── README.md
 ```
 
-Cada novo plugin entra como uma nova pasta na raiz, seguindo esse mesmo padrão, e precisa ser adicionado à lista `plugins` em `.claude-plugin/marketplace.json`.
+Para criar um novo plugin:
 
-## Configuração inicial (uma vez só)
-
-Antes de instalar qualquer plugin, adicione este repositório como marketplace. Isso só precisa ser feito **uma vez** por pessoa/máquina:
-
-```
-/plugin marketplace add Mobiltracker/mtk-claude-plugins
-```
-
-Ou via CLI:
-
-```bash
-claude plugin marketplace add Mobiltracker/mtk-claude-plugins
-```
+1, Criar a pasta `nome-do-plugin/` na raiz com `.claude-plugin/plugin.json` (obrigatório).
+2, Adicionar `.mcp.json` na raiz do plugin, se ele precisar expor MCP servers.
+3, Adicionar uma pasta em `skills/<nome-da-skill>/SKILL.md` para cada skill do plugin.
+4, Registrar o plugin na lista `plugins` de `.claude-plugin/marketplace.json`.
 
 ## Instalar um plugin
 
-Repita este passo para cada plugin do marketplace que você quiser usar:
+Dentro de uma sessão do Claude Code rode o comando:
 
 ```
 /plugin install publicar-app-play-store@mtk-claude-plugins
 ```
 
-Ou via CLI:
-
-```bash
-claude plugin install publicar-app-play-store@mtk-claude-plugins --scope user
-```
-
 O comando de instalação abre um menu para escolher o escopo (`user`, `project` ou `local`).
 
+### No Claude Desktop
+
+1. Abra as configurações (`Ctrl+,`) e vá em **Plugins**.
+
+   ![Configurações > Plugins](docs/images/install-01-settings-plugins.png)
+
+2. Clique em **Browse**, vá na aba **Code** e clique no `+` ao lado das abas para adicionar um marketplace.
+3. Cole a URL do repositório (`https://github.com/mobiltracker/mtk-claude-plugins.git`) e clique em **Sync**.
+   ![Add marketplace](docs/images/install-02-add-marketplace.png)
+4. De volta à aba **Code**, selecione `mtk-claude-plugins` e clique no `+` de cada plugin que quiser instalar.
+   ![Plugins do marketplace](docs/images/install-03-directory-plugins.png)
+
 ### Publicando alterações
+
+O Claude Code **não** detecta automaticamente novos commits. Antes de commitar/dar push em qualquer alteração de conteúdo (skill, `plugin.json`, etc.) de um plugin já publicado no marketplace, dê bump no campo `version`:
+
+- No `plugin.json` do plugin **e** no `marketplace.json`.
+- O Claude Code decide se há atualização comparando esse número — não o conteúdo dos arquivos.
+- Sem o bump, nem `/plugin marketplace update` nem `/reload-plugins` puxam o conteúdo novo (o cache em `~/.claude/plugins/cache/.../<version>/` só é regravado quando a versão muda).
 
 1. Commitar as mudanças:
    ```bash
@@ -84,37 +87,26 @@ O comando de instalação abre um menu para escolher o escopo (`user`, `project`
    git push -u origin master
    ```
 
-O Claude Code **não** detecta automaticamente novos commits. Quem já tem o marketplace adicionado precisa:
+## Puxar alterações
 
-- Atualizar o catálogo: `/plugin marketplace update mtk-claude-plugins` (só atualiza a lista disponível — não reinstala o que já está instalado)
-- Instalar o que for novo: `/plugin install <novo-plugin>@mtk-claude-plugins`
-- Se mudou o conteúdo de uma skill de um plugin já instalado via marketplace: **precisa dar bump no campo `version`** (no `plugin.json` do plugin E no `marketplace.json`) antes de commitar/push — o Claude Code decide se há atualização comparando esse número, não o conteúdo dos arquivos. Sem isso, nem `/plugin marketplace update` nem `/reload-plugins` puxam o conteúdo novo (confirmado na prática: o cache em `~/.claude/plugins/cache/.../<version>/` só é regravado quando a versão muda)
-- `/reload-plugins` sozinho só resolve para plugins instalados em modo local/dev (linkados direto da pasta do repo)
+Quem já tem o marketplace adicionado no Claude Code precisa atualizar cada plugin já instalado:
+
+```
+/plugin update <nome do plugin>@mtk-claude-plugins
+```
+
+> `/reload-plugins` sozinho só resolve para plugins instalados em modo local/dev (linkados direto da pasta do repo).
 
 > Dica: com _auto-update_ habilitado (aba **Marketplaces** em `/plugin`), o catálogo se atualiza sozinho em segundo plano.
 
-## Usando no Claude Desktop
+### No Claude Desktop
 
-O marketplace e o `/plugin install` são exclusivos do Claude Code — não funcionam no Claude Desktop, claude.ai (web) ou mobile. Para usar a skill `publicar-app-play-store` no Desktop, replique manualmente:
-
-1. **Copiar a skill**: abra `publicar-app-play-store/skills/publicar-app-play-store/SKILL.md` e cole o conteúdo como uma Skill customizada nas configurações do Claude Desktop.
-2. **Configurar o MCP**: edite o config do Desktop e adicione o mesmo servidor registrado em `publicar-app-play-store/.mcp.json`:
-   - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-   - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-   - Linux: `~/.config/Claude/claude_desktop_config.json`
-   ```json
-   {
-     "mcpServers": {
-       "playwright": {
-         "command": "npx",
-         "args": ["@playwright/mcp@latest"]
-       }
-     }
-   }
-   ```
-3. Reiniciar o Claude Desktop.
-
-> Não sincroniza automaticamente: qualquer atualização feita aqui no repositório precisa ser copiada manualmente de novo para o Desktop.
+1. Settings (`Ctrl+,`) → **Plugins** → clique no plugin para abrir os detalhes.
+   ![Detalhes do plugin](docs/images/update-01-plugin-details.png)
+2. Clique em **Browse**, vá na aba **Code** e clique nos `...` ao lado de `mtk-claude-plugins` → **Check for updates**.
+   ![Check for updates](docs/images/update-02-check-for-updates.png)
+3. Volte aos detalhes do plugin: se houver atualização, o botão **Update** fica habilitado — clique para atualizar.
+   ![Update disponível](docs/images/update-03-update-available.png)
 
 ## Comandos úteis
 
@@ -126,6 +118,7 @@ O marketplace e o `/plugin install` são exclusivos do Claude Code — não func
 | `/plugin marketplace list`                          | Lista os marketplaces adicionados                                                 |
 | `/plugin marketplace remove <nome>`                 | Remove um marketplace                                                             |
 | `/plugin install <plugin>@<marketplace>`            | Instala um plugin                                                                 |
+| `/plugin update <plugin>@<marketplace>`             | Atualiza um plugin já instalado para a versão mais recente do catálogo            |
 | `/plugin list`                                      | Lista plugins instalados                                                          |
 | `/plugin enable` / `disable <plugin>@<marketplace>` | Habilita/desabilita um plugin sem desinstalar                                     |
 | `/plugin uninstall <plugin>@<marketplace>`          | Remove um plugin                                                                  |
@@ -134,4 +127,4 @@ O marketplace e o `/plugin install` são exclusivos do Claude Code — não func
 | `/skills`                                           | Lista as skills disponíveis (nativas, do projeto, de plugins) e permite favoritar |
 | `/mcp`                                              | Lista os MCP servers configurados, status de conexão e permite autenticar         |
 
-Equivalentes via CLI: `claude plugin marketplace add|list|update|remove`, `claude plugin install|uninstall|enable|disable|list|details`.
+Equivalentes via CLI: `claude plugin marketplace add|list|update|remove`, `claude plugin install|update|uninstall|enable|disable|list|details`.
