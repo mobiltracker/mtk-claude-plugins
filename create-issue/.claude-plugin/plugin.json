@@ -1,0 +1,9 @@
+{
+  "name": "create-issue",
+  "displayName": "Create Issue",
+  "description": "Cria issues GitHub estruturadas para o time de automação da mobiltracker a partir de qualquer entrada",
+  "version": "0.1.0",
+  "author": {
+    "name": "MTK One"
+  }
+}
