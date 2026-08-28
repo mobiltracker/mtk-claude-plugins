@@ -33,7 +33,9 @@ Não avançar sem todos esses dados.
 
 **Pré-requisito**: confirmar que o JSON de service account do cliente já está salvo no bucket S3 `google-play-service-accounts` (renomeado como `<BRAND_NAME>-api-...`) — feito manualmente pelo colaborador, fora do escopo desta skill, mas não precisa esperar a publicação pra fazer isso.
 
-**Aviso**: mais adiante, na hora de enviar o ícone, o recurso gráfico, os screenshots e o `.aab`, a ferramenta de automação pode não conseguir fazer o upload (arquivos grandes, ex. `.aab` acima de ~10MB, ou seletor de arquivo inacessível) — nesse caso, precisa ser feito manualmente pelo colaborador. Avisar isso logo no início, sem esperar chegar nesse ponto.
+**Aviso**: o upload de ícone, recurso gráfico, screenshots e `.aab` não é feito pela automação — na etapa de preparação de cada um (antes de chegar na tela de upload), deixar os arquivos prontos/conferidos e pedir ao colaborador para fazer o upload manualmente. Avisar isso logo no início, sem esperar chegar nesse ponto.
+
+**Aviso**: pop-ups de onboarding/novidades do Play Console (ex. "Gerencie as mudanças...") podem aparecer sobre a tela a qualquer momento, bloqueando cliques. Se um clique falhar por causa disso, tirar um `browser_snapshot` pra confirmar, fechar o pop-up (clicar em "Avançar" até o fim do carrossel, ou fechar/Esc) e repetir a ação original.
 
 ## REGRA ABSOLUTA
 
@@ -59,7 +61,7 @@ Painel > Configurar o app > Ver etapas. Preencher cada subseção em bloco (todo
 - **Política de privacidade**: inserir a URL da política, salvar
 - **Acesso de apps**: "Recursos são restritos", credencial de teste `android@teste.com` / `123456` — confirmar que a conta "TK VALIDADOR INFRA" está compartilhada e online nessa credencial antes de salvar
 - **Anúncios**: "O app não tem anúncios", salvar
-- **Classificação de conteúdo**: email `mobiltrackerbrazil@gmail.com`, categoria "Todos os Outros Tipos de Aplicações", questionário: "Conteúdo Online" = Sim, todas as demais perguntas = Não (ler cada uma antes de confirmar que faz sentido), enviar
+- **Classificação de conteúdo**: email `mobiltrackerbrazil@gmail.com`, categoria "Todos os Outros Tipos de Aplicações", questionário: "Conteúdo Online" = Sim, todas as demais perguntas = Não (ler cada uma antes de confirmar que faz sentido). Ao terminar, clicar em "Salvar" (o botão "Avançar" fica desabilitado até isso) antes de avançar para a etapa "Resumo" e enviar
 - **Público-alvo e conteúdo**: faixa etária "Maiores de 18 anos", salvar
 - **Segurança dos dados**: importar o CSV informado no Passo 0 (todas as respostas do questionário vêm do CSV e variam por variante — Monitor/Tracker/Visits têm respostas diferentes, inclusive em localização, exclusão de dados e compartilhamento de identificadores; nunca preencher esses campos de memória). Avançar para "Coleta de dados e segurança" e conferir que veio tudo preenchido pelo CSV (coleta de dados obrigatórios, criptografia em trânsito, métodos de criação de contas, exclusão de dados, tipos de dados e o questionário de cada tipo). Se algum campo não vier marcado pelo CSV, PARAR e perguntar ao colaborador a resposta correta — não inventar. Salvar
 - **Apps governamentais**: seção própria — "Não", salvar
@@ -81,7 +83,7 @@ Painel > Configurar o app > Ver etapas. Preencher cada subseção em bloco (todo
     Obs.: se você não é um usuário registrado desse serviço, não instale esse aplicativo.
     ```
 
-  - Upload do ícone 512x512, gráfico 1024x500 e das 4 screenshots — se a tool de upload falhar em interagir com o campo, é uma limitação conhecida (o input de arquivo pode não ser acessível pra automação nessa tela); parar e avisar o colaborador que precisa fazer esse upload manualmente e também clicar em Salvar
+  - Upload do ícone 512x512, gráfico 1024x500 e das 4 screenshots: pedir ao colaborador para fazer esse upload manualmente (não tentar pela automação). Depois, tirar um `browser_snapshot` e confirmar que cada um foi de fato anexado ao campo certo — ícone, recurso gráfico e as 4 capturas de tela são slots separados, é preciso clicar "Adicionar recursos" em cada um
   - Declaração de recursos de IA: "Não rotular recursos"
   - Salvar
 
@@ -89,7 +91,7 @@ Painel > Configurar o app > Ver etapas. Preencher cada subseção em bloco (todo
 
 - **Países e regiões**: Testar e lançar > Produção > Países/regiões, adicionar todos, salvar
 - **Produção direta**: Testar e lançar > Produção > Versões > "Criar e publicar uma versão" — tentar publicar direto em produção, pulando o Teste fechado quando o Play Console permitir:
-  - Upload do `.aab` — se o arquivo for maior que o limite suportado pela ferramenta de automação (~10MB) ou o upload falhar, parar e avisar o colaborador que precisa fazer esse upload manualmente e também clicar em Salvar
+  - Upload do `.aab`: pedir ao colaborador para fazer esse upload manualmente (não tentar pela automação). Depois de qualquer upload, sempre conferir com `browser_snapshot` que foi salvo antes de seguir para outro campo
   - Assinatura de apps: "Gerenciar Preferências" > baixar chave de assinatura > copiar valor hex > rodar a workflow `_export_signing_key_output_zip.yml` em `github.com/mobiltracker/mobiltracker-app-monitor/actions` com esse hex > baixar o `.zip` gerado > fazer upload do `.zip` no campo de assinatura > aceitar os termos
   - Verificar fingerprints em Configuração > Assinatura de apps:
     - MD5: `FA:59:F1:46:48:6A:22:4B:7E:CD:B6:FF:6F:63:14:8A`
@@ -108,7 +110,8 @@ Painel > Configurar o app > Ver etapas. Preencher cada subseção em bloco (todo
 - Nunca inventar resposta para uma pergunta do questionário que não esteja listada aqui — se a Play Console mostrar uma pergunta nova/diferente, parar e perguntar ao colaborador
 - Se uma tool do MCP falhar em encontrar/interpretar um elemento da tela, parar e mostrar o que está vendo — não adivinhar clique
 - Nunca commitar nada relacionado a esse fluxo sem aprovação explícita (regra do projeto)
-- Upload de arquivo (ícone, gráfico, screenshots, `.aab`, `.zip` de assinatura): tentar uma única vez — se der certo de primeira, seguir; se falhar, não insistir/tentar de novo, avisar direto o colaborador pra fazer manualmente
+- Upload de arquivo (ícone, gráfico, screenshots, `.aab`): nunca tentar pela automação — pedir direto ao colaborador para fazer manualmente (`.zip` de assinatura é exceção, pequeno o suficiente pra automação)
+- Depois de qualquer upload manual do colaborador ou preenchimento de campos (nome de versão, notas etc.), salvar imediatamente ("Salvar" / "Salvar como rascunho" / "Adicionar recursos") e conferir com `browser_snapshot` que a ação realmente persistiu antes de prosseguir para outro campo ou tela
 - Ao concluir cada subseção (ex.: Política de privacidade, Acesso de apps, Segurança dos dados, ID de publicidade, Categoria e contato), reportar uma linha de status ao colaborador (ex.: `[Política de privacidade] preenchida`) antes de seguir para a próxima
 
 ## Erros comuns

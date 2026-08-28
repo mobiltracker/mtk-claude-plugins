@@ -9,7 +9,7 @@
       "name": "publicar-app-play-store",
       "source": "./publicar-app-play-store",
       "description": "Automatiza e orienta o processo de publicação de apps na Google Play Store",
-      "version": "0.1.2"
+      "version": "0.1.4"
     },
     {
       "name": "review-standards",
