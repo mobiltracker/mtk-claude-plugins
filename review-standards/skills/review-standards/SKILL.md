@@ -26,8 +26,9 @@ Standards live at `~/git/knowledge-base/docs/standards/`.
   the collection, not a rule. Some standards have a sibling folder with a test harness
   (`cases.json` / `ref.mjs` / `runner.mjs`); note it but do not run it (this skill is
   LLM-review only).
-- Read each standard document in full. These are the rules of record — quote them
-  exactly when reporting. Standards are written in Portuguese; rules apply regardless.
+- Read each standard document in full. These are the rules of record — reference them by
+  `slug / rule-header` when reporting, and quote wording only when it clarifies a subtle
+  divergence (per §5). Standards are written in Portuguese; rules apply regardless.
 
 This step is dynamic on purpose: whatever `*.md` files exist at runtime are the standards.
 Adding a new standard to the knowledge-base needs no change to this skill.
@@ -74,7 +75,8 @@ but it never mentions "cep"). Instead:
 
 The file set from §1 is already small. Review **all** of it directly against every
 standard. Skip the Explore subagent. A changed file is in scope for a standard if the
-standard plausibly governs it; skip files no standard applies to and say so briefly.
+standard plausibly governs it; skip files no standard applies to and list them in the
+mode-C coverage line (per §5).
 
 ## 4. Review
 
@@ -88,22 +90,54 @@ For each in-scope file, against each applicable standard:
 - Read the actual code — validator logic, JSX, event handlers, input attributes — to
   judge conformance. Don't assume from filenames.
 - Watch for violation-by-absence: a required behavior that is simply missing.
-- If a standard is pure process / not code-checkable, note it as skipped for that file.
 
 ## 5. Report
 
-Output plain markdown, grouped by standard. For each finding:
+Grouped by **file → line**. Only files/lines with at least one violation appear —
+no block for a clean file.
 
 ```
-<file>:<line> — [<standard-slug> / <rule>] <what's wrong> → <fix>
+<file>
+  :<line> — <what the element/field is>
+    violação  <standard-slug> / <rule-header> — <what in the code diverges>
+    violação  <standard-slug> / <rule-header> — <...>
+    sugestão  <how to fix>
+  :<line> — <...>
+    violação  <...>
+    sugestão  <...>
+
+<other-file>
+  :<line> — <...>
+    ...
 ```
 
-- Prefix each finding with severity: **blocker** (breaks the rule outright / bad data
-  downstream), **warn** (deviates, lower risk), **note** (minor / stylistic).
-- Order findings most-severe first within each standard.
-- When a file/standard is clean, say `conforms` — don't pad.
-- End with a one-line summary: files reviewed, findings by severity.
-- Cite the standard's own wording for each violated rule so the dev can verify against
-  the source doc.
+Three levels: **file** → **`:line` + what it is** → **violação / sugestão**. The file
+appears once; its lines nest under it.
+
+Two layers of content, kept distinct on purpose:
+
+- **`violação`** — a *fact*: the code diverges from a rule of record. Always name the
+  rule as `<standard-slug> / <rule-header>` (the doc's own section header) so the dev can
+  open the source and verify. One `violação` line per violated rule.
+- **`sugestão`** — the skill's *opinion* on how to fix it. At most one per line; when
+  several violations hit the same spot, consolidate into a single fix. The standard may
+  give a direction (quote it if so), but the concrete steps are a suggestion — the
+  `sugestão` label marks them as opinion the dev takes or ignores.
+
+Rules:
+
+- **No severity.** Do not label findings blocker/warn/note. The standards carry no
+  severity, so any level would be reviewer opinion dressed as data. Report the violation;
+  the dev prioritizes.
+- **No inline verbatim quoting** by default — `<standard-slug> / <rule-header>` already
+  points to the exact rule. Quote the doc only if the divergence is subtle and the wording
+  clarifies it.
+- Order by file, then line.
+- **Coverage (mode C only):** after the findings, add one line
+  `pulados: <files> (nenhum padrão aplica)` listing files that were in scope but skipped
+  because no standard governs them. This is per-file coverage, distinct from the
+  per-standard N/A forbidden below.
+- If the whole scope is clean against every applicable standard, say `conforms` — don't
+  pad. Do not list standards that didn't apply.
 
 Do not edit any file. This skill only reports.
