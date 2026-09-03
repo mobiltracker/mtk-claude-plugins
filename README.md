@@ -2,6 +2,15 @@
 
 Repositório de **plugins do Claude Code** da MTK. Funciona como um _marketplace_: qualquer pessoa pode adicionar este repositório no Claude Code e instalar os plugins/skills daqui.
 
+## Quick start
+
+Adicione o **marketplace** no seu **Claude Code** e instale o plugin desejado.
+
+```text
+/plugin marketplace add https://github.com/mobiltracker/mtk-claude-plugins
+/plugin install review-standards@mtk-claude-plugins
+```
+
 ## Conceitos
 
 ### Plugin
