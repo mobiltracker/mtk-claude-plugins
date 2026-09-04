@@ -35,7 +35,9 @@ Format — numbered items, GitHub-style checkbox sub-steps:
 ```
 
 - One numbered item per fix; the title carries `(file:line)`. Sub-steps are `- [ ]`
-  checkboxes — the concrete edits/checks for that fix.
+  checkboxes naming **what to do — short titles, not the concrete code**. Write an item's
+  actual edit only when you reach it in §2; never front-load the code for every item into
+  the checklist or one big proposal.
 - Track state on the boxes: tick `- [x]` when done, with a short inline note
   (`— tested` · `— committed <sha>` · `— uncommitted` · `(extra)` for an emergent cleanup
   like a rename or reorder).
@@ -53,6 +55,14 @@ Format — numbered items, GitHub-style checkbox sub-steps:
 If you're on the default branch, create a feature branch **before the first commit** —
 commits start firing inside this loop (see "Commit when a piece is closed"), so branch now.
 
+**The loop is binding — one piece per cycle.** A piece is usually one checklist item; a
+new util and its first caller (which don't stand alone) close together as one piece.
+Finish the current piece (edit → test → commit, or an explicit deferral) before you
+produce or apply the next piece's edit. A single approval ("y") covers only the current
+piece — never read one go-ahead as approval to apply several unrelated items. If you're
+about to edit an unrelated item before the current piece is committed, stop and close it
+first.
+
 Work each checklist item in order. For each:
 
 - **Re-verify against the current file** — read the cited line, confirm the violation is
@@ -68,8 +78,16 @@ Work each checklist item in order. For each:
   dev, and apply their call only if they make one.
 - **Flag coupling/risk** before editing — JS depending on an `id`, a shared component, a
   value read elsewhere. Say what could break.
-- **Propose the minimal isolated edit**, tied to the rule. Apply only on the user's
-  go-ahead.
+- **Reuse before you build.** If the item needs a validator, helper, or shared logic,
+  FIRST search the codebase (`utils/`, existing schemas/validators) and the standard's own
+  reference implementation. Reuse what's there; extend it if close; write new only if
+  nothing fits. Do this search **before** designing any new code — don't draft a fresh
+  validator and discover the existing util afterwards.
+- **Anchor the design once.** For a non-trivial item, settle the approach in ONE round
+  before writing code: reuse-or-new, WHERE it lives, which reference to mirror, and the
+  open decisions (field optional? messages? scope?). Ask them together, get the answers,
+  then write. Don't re-derive the design or re-propose alternatives across turns — if you
+  catch yourself on a third variant, stop and pick one.
 - **Stay within the rule.** The standard is the spec; if it names a reference
   implementation, that's the shape to match. When a fix needs a mechanism the standard
   does NOT specify (a cap scheme, a safety ceiling, a validator design), label it as your
@@ -79,13 +97,15 @@ Work each checklist item in order. For each:
   implementation, don't fold another standard's rule into it. Keep the port pure and
   compose extra rules in a separate layer — e.g. emoji-blocking is an endereço rule, not
   text-input, so it belongs in an address helper, not the generic text util.
+- **Propose the minimal isolated edit**, tied to the rule. Apply only on the user's
+  go-ahead.
 - **Say how to test it** — the concrete action (what to type / click / inspect). Offer to
-  help if the dev needs it to run or reach the screen. Then wait for the user's result
-  before the next item.
-- **Commit when a piece is closed.** Once an item (or a small coherent group) is applied
-  and tested green, commit it — reconcile against the provisional plan: if the code
-  separated as planned, commit that boundary; if it interleaved, adjust the plan out loud
-  and commit the unit that actually stands alone. Show the message, get approval.
+  help if the dev needs it to run or reach the screen. Then wait for the user's result.
+- **Commit when a piece is closed — this is the gate.** Once the piece is applied and
+  tested green, commit it (or explicitly defer with the dev) BEFORE editing the next piece.
+  Don't advance with an uncommitted piece. Reconcile against the provisional plan:
+  separated as planned → commit that boundary; interleaved → adjust the plan out loud and
+  commit the unit that stands alone. Show the message, get approval.
 
 Let cleanups surface as their own items (a rename, a DOM reorder) — don't force-bundle.
 
