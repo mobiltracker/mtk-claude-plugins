@@ -2,6 +2,6 @@
   "name": "review-standards",
   "displayName": "Review Standards",
   "description": "Revisa e opcionalmente corrige código frontend contra os standards do knowledge-base da MTK (validação de nome PF-BR, formulário de endereço BR, e quaisquer novos docs/standards/*.md). Inclui review-standards (report read-only) e fix-standards (correção guiada dos findings).",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": { "name": "MTK One" }
 }
