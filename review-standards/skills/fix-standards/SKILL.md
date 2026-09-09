@@ -38,6 +38,8 @@ Format — numbered items, GitHub-style checkbox sub-steps:
   checkboxes naming **what to do — short titles, not the concrete code**. Write an item's
   actual edit only when you reach it in §2; never front-load the code for every item into
   the checklist or one big proposal.
+- **Render literal `- [ ]` boxes from the first version** — every sub-step is a checkbox,
+  never a plain `-` bullet or a prose line. The checklist must be tickable on sight.
 - Track state on the boxes: tick `- [x]` when done, with a short inline note
   (`— tested` · `— committed <sha>` · `— uncommitted` · `(extra)` for an emergent cleanup
   like a rename or reorder).
@@ -84,11 +86,11 @@ Work each checklist item in order. For each:
   dev, and apply their call only if they make one.
 - **Flag coupling/risk** before editing — JS depending on an `id`, a shared component, a
   value read elsewhere. Say what could break.
-- **Reuse before you build.** If the item needs a validator, helper, or shared logic,
-  FIRST search the codebase (`utils/`, existing schemas/validators) and the standard's own
-  reference implementation. Reuse what's there; extend it if close; write new only if
-  nothing fits. Do this search **before** designing any new code — don't draft a fresh
-  validator and discover the existing util afterwards.
+- **Reuse before you build.** If the item needs a validator, helper, schema, class, or
+  shared logic, FIRST search the codebase (`utils/`, existing schemas/validators) and the
+  standard's own reference implementation. Reuse what's there; extend it if close; write
+  new only if nothing fits. Do this search **before** designing any new code — don't draft
+  a fresh one and discover the existing code afterwards.
 - **Anchor the design once.** For a non-trivial item, settle the approach in ONE round
   before writing code: reuse-or-new, WHERE it lives, which reference to mirror, and the
   open decisions (field optional? messages? scope?). Ask them together, get the answers,
@@ -105,6 +107,13 @@ Work each checklist item in order. For each:
   text-input, so it belongs in an address helper, not the generic text util.
 - **Propose the minimal isolated edit**, tied to the rule. Apply only on the user's
   go-ahead.
+- **Lock a ported implementation with the standard's own cases.** When a piece ports a
+  standard's reference impl into the repo, vendor the case files it ships (`cases.json`,
+  `normalize-cases.json`, any `*cases.json`) into the project's test tree — a folder per
+  standard slug — and add a test asserting the port matches every case (plus normalize
+  idempotency / fixed-point where applicable). Header-comment the source path + "re-sync by
+  re-copying"; the fixtures are a snapshot (knowledge-base isn't on CI). The ported code
+  and its test are one closeable piece.
 - **Say how to test it** — the concrete action (what to type / click / inspect). Offer to
   help if the dev needs it to run or reach the screen. Then wait for the user's result.
 - **Commit when a piece is closed — this is the gate.** Once the piece is applied and
