@@ -127,15 +127,22 @@ no block for a clean file.
 Three levels: **file** → **`:line` + what it is** → **violação / sugestão**. The file
 appears once; its lines nest under it.
 
+Render this shape literally — emit it as one fenced (```` ``` ````) plain-text block with
+the three-level indent exactly as the template. Do NOT reflow it into markdown bullets,
+headings, or backtick lists; the indentation is the structure, keep it verbatim. Meta lines
+(component-dependent note, fix-standards pointer) go outside the fence.
+
 Two layers of content, kept distinct on purpose:
 
 - **`violação`** — a *fact*: the code diverges from a rule of record. Always name the
   rule as `<standard-slug> / <rule-header>` (the doc's own section header) so the dev can
   open the source and verify. One `violação` line per violated rule.
-- **`sugestão`** — the skill's *opinion* on how to fix it. At most one per line; when
-  several violations hit the same spot, consolidate into a single fix. The standard may
-  give a direction (quote it if so), but the concrete steps are a suggestion — the
-  `sugestão` label marks them as opinion the dev takes or ignores.
+- **`sugestão`** — the skill's *opinion* on the fix, kept to a short **direction**: what to
+  do + which rule or reference to follow (e.g. "apply the person-name validator per
+  `ref.mjs`"). NOT the full solution spec or design — don't reproduce charsets, step-lists,
+  or code shape; that's fix-standards' job. One per line; consolidate when several
+  violations hit the same spot. The `sugestão` label marks it as opinion the dev takes or
+  ignores.
 
 Rules:
 
@@ -145,6 +152,10 @@ Rules:
 - **No inline verbatim quoting** by default — `<standard-slug> / <rule-header>` already
   points to the exact rule. Quote the doc only if the divergence is subtle and the wording
   clarifies it.
+- **Collapse identical fields.** When two or more fields share the same rule and the same
+  defect (e.g. firstName and lastName both lacking person-name validation), list the
+  `violação` lines once and reference the rest with `idem` — don't repeat the full set per
+  field.
 - Order by file, then line.
 - **Coverage (mode C only):** after the findings, add one line
   `pulados: <files> (nenhum padrão aplica)` listing files that were in scope but skipped
