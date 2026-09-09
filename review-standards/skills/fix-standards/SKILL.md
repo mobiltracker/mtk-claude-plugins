@@ -86,16 +86,12 @@ Work each checklist item in order. For each:
   dev, and apply their call only if they make one.
 - **Flag coupling/risk** before editing — JS depending on an `id`, a shared component, a
   value read elsewhere. Say what could break.
-- **Reuse before you build.** If the item needs a validator, helper, schema, class, or
-  shared logic, FIRST search the codebase (`utils/`, existing schemas/validators) and the
-  standard's own reference implementation. Reuse what's there; extend it if close; write
-  new only if nothing fits. Do this search **before** designing any new code — don't draft
-  a fresh one and discover the existing code afterwards.
-- **Anchor the design once.** For a non-trivial item, settle the approach in ONE round
-  before writing code: reuse-or-new, WHERE it lives, which reference to mirror, and the
-  open decisions (field optional? messages? scope?). Ask them together, get the answers,
-  then write. Don't re-derive the design or re-propose alternatives across turns — if you
-  catch yourself on a third variant, stop and pick one.
+- **Design the fix in one pass.** If the item needs new logic (validator, helper, schema,
+  class), FIRST search for something to reuse — the codebase (`utils/`, existing
+  schemas/validators) and the standard's reference impl; reuse or extend it, build new only
+  if nothing fits. Then settle the approach in ONE round — reuse-or-new, where it lives,
+  which reference to mirror, the open decisions — and write. Don't re-derive or re-propose
+  alternatives across turns; if you're on a third variant, stop and pick one.
 - **Stay within the rule.** The standard is the spec; if it names a reference
   implementation, that's the shape to match. When a fix needs a mechanism the standard
   does NOT specify (a cap scheme, a safety ceiling, a validator design), label it as your
