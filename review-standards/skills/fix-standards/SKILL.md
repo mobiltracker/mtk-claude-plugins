@@ -48,6 +48,12 @@ Format — numbered items, GitHub-style checkbox sub-steps:
 - **Sketch a provisional commit plan** alongside the checklist — which items likely group
   into which commits (e.g. "utils · validation items · S/N"). Mark it a hypothesis: it
   gets adjusted as the code reveals what actually separates cleanly.
+- **Keep the run-up lean.** The checklist is titles + `file:line` + the split line + the
+  commit-plan line — nothing more. Do NOT put per-item coupling, risk, design, concrete
+  code, or item-local decisions in it; those happen in §2 when you reach the item. No
+  A/B/C menu or reordering — the list order is the order. Surface only a decision that
+  changes the plan's shape (e.g. "surname required?"), briefly. After one approval, go
+  straight to item 1 — don't re-propose the plan.
 - Show the checklist. Get approval before editing anything — this skill mutates code.
 
 ## 2. Fix one item at a time
