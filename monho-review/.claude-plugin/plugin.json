@@ -1,0 +1,7 @@
+{
+  "name": "monho-review",
+  "displayName": "Monho Review",
+  "description": "Roda o review do monho no console: bugs, segurança, performance e encapsulamento nas linhas alteradas da branch ou de um PR, sem postar nada.",
+  "version": "0.1.0",
+  "author": { "name": "MTK One" }
+}
