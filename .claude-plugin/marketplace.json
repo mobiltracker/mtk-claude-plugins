@@ -15,7 +15,7 @@
       "name": "review-standards",
       "source": "./review-standards",
       "description": "Revisa código frontend contra os standards do knowledge-base da MTK",
-      "version": "0.1.0"
+      "version": "0.3.3"
     },
     {
       "name": "update-mtk-plugins",
@@ -27,6 +27,12 @@
       "name": "create-issue",
       "source": "./create-issue",
       "description": "Cria issues GitHub estruturadas para o time de automação da mobiltracker a partir de qualquer entrada",
+      "version": "0.1.0"
+    },
+    {
+      "name": "monho-review",
+      "source": "./monho-review",
+      "description": "Roda o review do monho no console, sem postar nada no PR",
       "version": "0.1.0"
     }
   ]
